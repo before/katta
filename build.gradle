@@ -14,8 +14,6 @@ sourceCompatibility = 1.6
 project.ext.set("hadoop_version", "0.20.2")
 project.ext.set("lucene_version", "3.5.0")
 
-
-
 subprojects {
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
@@ -67,6 +65,8 @@ subprojects {
 	tasks["eclipseJdt"].dependsOn(eclipseJdtPrepare)
 
 }
+
+allprojects { apply from: new File('jacoco-multiproject-aggregator.gradle').getAbsolutePath() }
 
 
 
