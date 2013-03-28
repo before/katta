@@ -6,6 +6,15 @@ jar {
 
 
 //--------------------
+// Additional Sources
+//--------------------
+sourceSets {
+  integrationTest { java.srcDir 'src/it/java'  }
+}
+
+
+
+//--------------------
 // Eclipse Setup
 //--------------------
 eclipse {
