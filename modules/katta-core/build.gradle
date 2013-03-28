@@ -1,0 +1,31 @@
+jar {
+	manifest {
+		attributes 'Implementation-Title': 'Katta Core', 'Implementation-Version': version
+	}
+}
+
+
+//--------------------
+// Eclipse Setup
+//--------------------
+eclipse {
+	classpath { defaultOutputDir = file('build-eclipse') }
+}
+
+
+//--------------------
+// Source Jar
+//--------------------
+task sourceJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+task javadocJar(type: Jar, dependsOn:javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+artifacts {
+	archives sourceJar
+	archives javadocJar
+}
+task jars(dependsOn: ['jar', 'sourceJar'], description: 'Build jar & source jar') << {}
