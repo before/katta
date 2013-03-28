@@ -27,15 +27,18 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.hadoop.io.Writable;
-import org.mortbay.log.Log;
+import org.apache.log4j.Logger;
 
 import com.google.common.base.Objects;
 
 public class DocumentFrequencyWritable implements Writable {
-  private ReadWriteLock _frequenciesLock = new ReentrantReadWriteLock(true);
-  private Map<TermWritable, Integer> _frequencies = new HashMap<TermWritable, Integer>();
 
-  private AtomicLong _numDocs = new AtomicLong();
+  private static final Logger LOG = Logger.getLogger(DocumentFrequencyWritable.class);
+
+  private final ReadWriteLock _frequenciesLock = new ReentrantReadWriteLock(true);
+  private final Map<TermWritable, Integer> _frequencies = new HashMap<TermWritable, Integer>();
+
+  private final AtomicLong _numDocs = new AtomicLong();
 
   public void put(final String field, final String term, final int frequency) {
     _frequenciesLock.writeLock().lock();
@@ -81,7 +84,7 @@ public class DocumentFrequencyWritable implements Writable {
 
   public void addNumDocs(long numDocs) {
     if (Long.MAX_VALUE - numDocs - _numDocs.get() < 0) {
-      Log.warn("max number of documents exceeded " + _numDocs.get() + " + " + numDocs);
+      LOG.warn("max number of documents exceeded " + _numDocs.get() + " + " + numDocs);
       numDocs = Long.MAX_VALUE;
     }
     _numDocs.addAndGet(numDocs);
@@ -100,6 +103,7 @@ public class DocumentFrequencyWritable implements Writable {
     return Collections.unmodifiableMap(_frequencies);
   }
 
+  @Override
   public void readFields(final DataInput in) throws IOException {
     _frequenciesLock.writeLock().lock();
     try {
@@ -116,6 +120,7 @@ public class DocumentFrequencyWritable implements Writable {
     }
   }
 
+  @Override
   public void write(final DataOutput out) throws IOException {
     _frequenciesLock.readLock().lock();
     try {

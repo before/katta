@@ -26,9 +26,11 @@ import net.sf.katta.operation.node.ShardUndeployOperation;
 import net.sf.katta.protocol.InteractionProtocol;
 import net.sf.katta.protocol.metadata.IndexMetaData;
 
-import org.mortbay.log.Log;
+import org.apache.log4j.Logger;
 
 public class RemoveObsoleteShardsOperation implements MasterOperation {
+
+  private static final Logger LOG = Logger.getLogger(RemoveObsoleteShardsOperation.class);
 
   private static final long serialVersionUID = 1L;
   private final String _nodeName;
@@ -47,7 +49,7 @@ public class RemoveObsoleteShardsOperation implements MasterOperation {
     Collection<String> nodeShards = protocol.getNodeShards(_nodeName);
     List<String> obsoletShards = collectObsoleteShards(protocol, nodeShards, runningOperations);
     if (!obsoletShards.isEmpty()) {
-      Log.info("found following shards obsolete on node " + _nodeName + ": " + obsoletShards);
+      LOG.info("found following shards obsolete on node " + _nodeName + ": " + obsoletShards);
       protocol.addNodeOperation(_nodeName, new ShardUndeployOperation(obsoletShards));
     }
 
@@ -66,7 +68,7 @@ public class RemoveObsoleteShardsOperation implements MasterOperation {
           obsoletShards.add(shardName);
         }
       } catch (IllegalArgumentException e) {
-        Log.warn("found shard with invalid name '" + shardName + "' - instruct removal");
+        LOG.warn("found shard with invalid name '" + shardName + "' - instruct removal");
         obsoletShards.add(shardName);
       }
     }
