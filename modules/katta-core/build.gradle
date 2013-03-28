@@ -6,11 +6,12 @@ jar {
 
 
 //--------------------
-// Additional Sources
+// Integration Tests
 //--------------------
 sourceSets {
   integrationTest { java.srcDir 'src/it/java'  }
 }
+apply from: '../../integration-test.gradle'
 
 
 

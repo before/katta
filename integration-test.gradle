@@ -1,0 +1,31 @@
+// Assumes apply: 'java' has been done somewhere before
+
+// Add integration test source sets (currently only for java)
+sourceSets {
+	integrationTest { sourceSet ->
+		[
+			"java",
+			"resources"
+		].each {
+			if (!sourceSet.hasProperty(it)) return
+				sourceSet."$it".srcDir file("src/it/${it}")
+		}
+	}
+}
+
+// Setup dependencies for integration testing
+dependencies {
+	integrationTestCompile sourceSets.main.output
+	integrationTestCompile sourceSets.test.output
+	integrationTestCompile configurations.testCompile
+	integrationTestRuntime configurations.testRuntime
+}
+
+// Define integration test task
+task integrationTest(type: Test) {
+	testClassesDir = sourceSets.integrationTest.output.classesDir
+	classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+// Make sure check calls integration test
+check.dependsOn integrationTest
